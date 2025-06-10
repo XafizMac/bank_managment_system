@@ -40,6 +40,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { fetchUser } from "@/lib/fetchUser";
+import { useStore } from "@/store/store";
+import { fetchAllDocx } from "@/lib/fetchAllDocx";
 
 const DOCUMENTS = [
   {
@@ -129,10 +131,14 @@ export default function DocumentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortColumn, setSortColumn] = useState("updatedAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const setDocx = useStore((state) => state.setDocx);
 
   useEffect(() => {
     fetchUser();
+    fetchAllDocx(setDocx);
   }, []);
+
+  const allDocx = useStore((state) => state.docx);
 
   const handleSort = (column: string) => {
     if (column === sortColumn) {
@@ -143,11 +149,10 @@ export default function DocumentsPage() {
     }
   };
 
-  const filteredDocuments = DOCUMENTS.filter(
+  const filteredDocuments = allDocx.filter(
     (doc) =>
       doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      doc.client.toLowerCase().includes(searchQuery.toLowerCase())
+      doc.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const sortedDocuments = [...filteredDocuments].sort((a: any, b: any) => {
@@ -173,23 +178,20 @@ export default function DocumentsPage() {
     }
   }
 
-  function formatDate(dateString: string) {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
+    const shortDate = date.toLocaleDateString("ru-RU");
+    return shortDate;
+  };
 
   return (
     <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Documents</h2>
+        <h2 className="text-3xl font-bold tracking-tight">Документы</h2>
         <Button asChild>
           <Link href="/documents/create">
             <FilePlus className="mr-2 h-4 w-4" />
-            New Document
+            Новый документ
           </Link>
         </Button>
       </div>
@@ -197,11 +199,12 @@ export default function DocumentsPage() {
       <Tabs defaultValue="all" className="space-y-4">
         <div className="flex flex-col sm:flex-row justify-between gap-2">
           <TabsList>
-            <TabsTrigger value="all">All Documents</TabsTrigger>
-            <TabsTrigger value="pending">Pending</TabsTrigger>
-            <TabsTrigger value="approved">Approved</TabsTrigger>
-            <TabsTrigger value="rejected">Rejected</TabsTrigger>
-            <TabsTrigger value="draft">Drafts</TabsTrigger>
+            <TabsTrigger value="all">Все</TabsTrigger>
+            <TabsTrigger value="draft">Черновики</TabsTrigger>
+            <TabsTrigger value="sent">Отправленные</TabsTrigger>
+            <TabsTrigger value="review">На рассмотрении</TabsTrigger>
+            <TabsTrigger value="approved">Солгасован</TabsTrigger>
+            <TabsTrigger value="rejected">Отклонен</TabsTrigger>
           </TabsList>
 
           <div className="flex items-center gap-2">
@@ -209,7 +212,7 @@ export default function DocumentsPage() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 type="search"
-                placeholder="Search documents..."
+                placeholder="Поиск документа..."
                 className="w-full sm:w-64 pl-8"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -233,7 +236,7 @@ export default function DocumentsPage() {
                       className="cursor-pointer"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Document ID</span>
+                        <span>ID</span>
                         {sortColumn === "id" && (
                           <ArrowUpDown className="h-3 w-3" />
                         )}
@@ -244,7 +247,7 @@ export default function DocumentsPage() {
                       className="cursor-pointer"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Title</span>
+                        <span>Название</span>
                         {sortColumn === "title" && (
                           <ArrowUpDown className="h-3 w-3" />
                         )}
@@ -255,7 +258,7 @@ export default function DocumentsPage() {
                       className="cursor-pointer hidden md:table-cell"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Client</span>
+                        <span>Автор</span>
                         {sortColumn === "client" && (
                           <ArrowUpDown className="h-3 w-3" />
                         )}
@@ -266,7 +269,7 @@ export default function DocumentsPage() {
                       className="cursor-pointer"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Status</span>
+                        <span>Статус</span>
                         {sortColumn === "status" && (
                           <ArrowUpDown className="h-3 w-3" />
                         )}
@@ -277,19 +280,21 @@ export default function DocumentsPage() {
                       className="cursor-pointer hidden md:table-cell"
                     >
                       <div className="flex items-center space-x-1">
-                        <span>Last Updated</span>
+                        <span>Дата создание</span>
                         {sortColumn === "updatedAt" && (
                           <ArrowUpDown className="h-3 w-3" />
                         )}
                       </div>
                     </TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-right">Действия</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sortedDocuments.map((doc) => (
                     <TableRow key={doc.id}>
-                      <TableCell className="font-medium">{doc.id}</TableCell>
+                      <TableCell className="font-medium">
+                        {doc.id.slice(0, 3)}
+                      </TableCell>
                       <TableCell>
                         <Link
                           href={`/documents/${doc.id}`}
@@ -299,7 +304,7 @@ export default function DocumentsPage() {
                         </Link>
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {doc.client}
+                        {doc.author.name}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -314,7 +319,7 @@ export default function DocumentsPage() {
                       <TableCell className="hidden md:table-cell">
                         <div className="flex items-center">
                           <Calendar className="mr-1 h-3 w-3 text-muted-foreground" />
-                          <span>{formatDate(doc.updatedAt)}</span>
+                          <span>{formatDate(doc.createdAt)}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
@@ -331,15 +336,17 @@ export default function DocumentsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/documents/${doc.id}`}>View</Link>
+                              <Link target="_blank" href={doc.fileUrl}>
+                                Посмотреть
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link href={`/documents/${doc.id}/edit`}>
-                                Edit
+                                Редактировать
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>Share</DropdownMenuItem>
-                            <DropdownMenuItem>Download</DropdownMenuItem>
+                            <DropdownMenuItem>Поделиться</DropdownMenuItem>
+                            <DropdownMenuItem>Скачать</DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

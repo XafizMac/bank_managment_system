@@ -34,8 +34,8 @@ export default function MyDocuments() {
   return (
     <div className="m-auto w-[95%] py-4 flex flex-col space-y-4 items-center">
       <h2 className="text-2xl font-semibold self-start">Мои документы</h2>
-      <Tabs className="flex flex-col w-full space-y-3 items-center">
-        <TabsList defaultValue="draft">
+      <Tabs defaultValue="all" className="flex flex-col w-full space-y-3 items-center">
+        <TabsList>
           <TabsTrigger value="all">Все</TabsTrigger>
           <TabsTrigger value="draft">Черновики</TabsTrigger>
           <TabsTrigger value="sent">Отправленные</TabsTrigger>

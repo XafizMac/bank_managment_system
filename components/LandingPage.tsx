@@ -16,20 +16,21 @@ function LandingPage() {
           </div>
 
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
-            Electronic Document Management System
+            Система электронного документооборота
           </h1>
 
           <p className="text-xl text-muted-foreground">
-            Streamline your banking document workflows with our secure,
-            efficient, and compliant document management system.
+            Оптимизируйте свои рабочие процессы с банковскими документами с
+            помощью нашей безопасной системы управления документами, эффективной
+            и совместимой.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
             <Button size="lg" asChild>
-              <Link href="/login">Get Started</Link>
+              <Link href="/login">Начать</Link>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <Link href="/help">Learn More</Link>
+              <Link href="/help">Подробнее</Link>
             </Button>
           </div>
 
@@ -38,10 +39,12 @@ function LandingPage() {
               <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <FileText className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-lg font-medium">Document Management</h3>
+              <h3 className="text-lg font-medium">
+                Управление документооборотом
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Create, review, and approve documents with a streamlined
-                workflow.
+                Создавайте, просматривайте и утверждайте документы с помощью
+                упрощенного рабочий процесс.
               </p>
             </div>
 
@@ -49,9 +52,10 @@ function LandingPage() {
               <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <Users className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-lg font-medium">Client Management</h3>
+              <h3 className="text-lg font-medium">Управление клиентами</h3>
               <p className="text-sm text-muted-foreground">
-                Manage client information and associated documents in one place.
+                Управляйте информацией о клиентах и связанными с ними
+                документами в одном месте.
               </p>
             </div>
 
@@ -59,10 +63,12 @@ function LandingPage() {
               <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
                 <CheckCircle className="h-5 w-5 text-primary" />
               </div>
-              <h3 className="text-lg font-medium">Compliance Ready</h3>
+              <h3 className="text-lg font-medium">
+                Готовность к соблюдению требований
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Built with banking regulations and compliance requirements in
-                mind.
+                Построенный с учетом банковских правил и требований к соблюдению
+                нормативных требований .
               </p>
             </div>
           </div>
